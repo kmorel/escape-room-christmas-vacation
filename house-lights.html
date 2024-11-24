@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Lights</title>
+    <link rel="stylesheet" href="house-lights.css">
+</head>
+<body>
+    <div class="image-container">
+        <img src="house-lights-off.jpg" alt="Image 1" class="active">
+        <img src="house-lights-on.jpg" alt="Image 2">
+    </div>
+
+    <script>
+      // Image switching logic
+      const images = document.querySelectorAll('.image-container img');
+      const code = [ 4, 2, 3, 5 ]
+
+      const blinkOffTime = 300
+      const blinkOnTime = 300
+      const pauseTime = 1000
+      const betweenTime = 1500
+
+      let currentDigit = 0
+      let currentBlink = 0
+
+      function blinkOff() {
+          images[0].classList.add('active')
+          images[1].classList.remove('active')
+
+          setTimeout(blinkOn, blinkOffTime)
+      }
+
+      function blinkOn() {
+          images[0].classList.remove('active')
+          images[1].classList.add('active')
+
+          currentBlink++;
+          if (currentBlink < code[currentDigit]) {
+              setTimeout(blinkOff, blinkOnTime)
+          } else {
+              setTimeout(pauseOff, blinkOnTime)
+          }
+      }
+
+      function pauseOff() {
+          images[0].classList.add('active')
+          images[1].classList.remove('active')
+
+          currentBlink = 0
+          currentDigit++
+          if (currentDigit < code.length) {
+              setTimeout(blinkOn, pauseTime)
+          } else {
+              setTimeout(between, pauseTime)
+          }
+      }
+
+      function between() {
+          images[0].classList.remove('active')
+          images[1].classList.add('active')
+
+          currentDigit = -1;
+          setTimeout(pauseOff, betweenTime)
+      }
+
+      setTimeout(blinkOff, pauseTime)
+    </script>
+</body>
+</html>
