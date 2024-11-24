@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Christmas Light Panel</title>
+    <link rel="stylesheet" href="light-panel.css">
+</head>
+<body>
+    <h1>Exterior Illumination Panel</h1>
+    <div class="switch-container" id="switchContainer"></div>
+
+    <script>
+      // Number of switches
+      const numSwitches = 10;
+
+      // Generate switches and lights dynamically
+      const switchContainer = document.getElementById('switchContainer');
+
+      const target = [ false, true, true, false, true, false,
+                       false, true, false, false, true, true ];
+
+      const nextPage = 'https://www.google.com'
+
+      switchState = []
+      lightElements = []
+
+      function updateLightState() {
+          var allOn = true
+          for (let i = 0; i < numSwitches; i++) {
+              var isOn = (switchState[i] == switchState[i+1]) == target[i]
+              allOn &= isOn
+              lightElements[i].classList.toggle('on', isOn)
+          }
+          if (allOn) {
+              window.location = nextPage
+          }
+      }
+
+      for (let i = 0; i < numSwitches; i++) {
+          const switchWrapper = document.createElement('div');
+          switchWrapper.classList.add('switch');
+
+          const light = document.createElement('div');
+          light.classList.add('light');
+          light.id = `light-${i}`;
+
+          const toggleSwitch = document.createElement('div');
+          toggleSwitch.classList.add('toggle-switch');
+          toggleSwitch.id = `switch-${i}`;
+
+          switchState.push(false)
+          lightElements.push(light)
+
+          // Add event listener for toggling
+          toggleSwitch.addEventListener('click', () => {
+              const isOn = toggleSwitch.classList.toggle('on');
+              //light.classList.toggle('on', isOn);
+              switchState[i] = isOn
+              updateLightState()
+          });
+
+          switchWrapper.appendChild(light);
+          switchWrapper.appendChild(toggleSwitch);
+          switchContainer.appendChild(switchWrapper);
+      }
+      switchState.push(false)
+
+      updateLightState()
+    </script>
+</body>
+</html>
