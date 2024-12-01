@@ -73,37 +73,51 @@
     let offsetX = 0;
     let offsetY = 0;
 
-    // Add event listeners to each sprite
-    sprites.forEach(sprite => {
-      sprite.addEventListener('mousedown', (e) => {
-        activeSprite = sprite;
-        offsetX = e.clientX - sprite.offsetLeft;
-        offsetY = e.clientY - sprite.offsetTop;
-        sprite.style.cursor = 'grabbing';
-      });
+    // Function to handle starting drag
+    function startDrag(event) {
+        const touch = event.touches ? event.touches[0] : event; // Handle both touch and mouse events
+        activeSprite = event.target;
+        offsetX = touch.clientX - activeSprite.offsetLeft;
+        offsetY = touch.clientY - activeSprite.offsetTop;
+        activeSprite.style.cursor = 'grabbing';
+    }
 
-      sprite.addEventListener('mouseup', () => {
-        activeSprite = null;
-        sprite.style.cursor = 'grab';
-      });
-    });
+    // Function to handle dragging
+    function drag(event) {
+        if (!activeSprite) return;
 
-    // Handle dragging
-    window.addEventListener('mousemove', (e) => {
-      if (activeSprite) {
-        const x = e.clientX - offsetX;
-        const y = e.clientY - offsetY;
+        const touch = event.touches ? event.touches[0] : event; // Handle both touch and mouse events
+        const x = touch.clientX - offsetX;
+        const y = touch.clientY - offsetY;
         activeSprite.style.left = `${x}px`;
         activeSprite.style.top = `${y}px`;
-      }
-    });
+    }
 
-    // Release the sprite when the mouse button is released outside it
-    window.addEventListener('mouseup', () => {
-      if (activeSprite) {
-        activeSprite.style.cursor = 'grab';
-        activeSprite = null;
-      }
+    // Function to handle end of drag
+    function endDrag() {
+        if (activeSprite) {
+            activeSprite.style.cursor = 'grab';
+            activeSprite = null;
+        }
+    }
+
+    // Add event listeners to each sprite
+    sprites.forEach(sprite => {
+        // Mouse events
+        sprite.addEventListener('mousedown', startDrag);
+        window.addEventListener('mousemove', drag);
+        window.addEventListener('mouseup', endDrag);
+
+        // Touch events
+        sprite.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevent scrolling while dragging
+            startDrag(e);
+        });
+        window.addEventListener('touchmove', (e) => {
+            e.preventDefault(); // Prevent scrolling while dragging
+            drag(e);
+        });
+        window.addEventListener('touchend', endDrag);
     });
 
     window.addEventListener('load', () => {
