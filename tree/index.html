@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Burnt Tree</title>
+  <style>
+    /* Reset styles */
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    /* Fullscreen background */
+    #background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('tree.jpeg') no-repeat center center/cover;
+      background-size: contain;
+      background-color: #FFF;
+    }
+
+    /* Sprite styles */
+    .sprite {
+      position: absolute;
+      background-size: cover;
+      cursor: grab;
+      transform-origin: bottom left;
+      transition: transform 0.2s ease;
+    }
+
+    #sprite1 {
+      background: url('present-1.png') no-repeat center center;
+      width: 500px;
+      height: 100px;
+    }
+
+    #sprite2 {
+      background: url('present-3.png') no-repeat center center;
+      width: 300px;
+      height: 300px;
+    }
+
+    #sprite3 {
+      background: url('present-5.png') no-repeat center center;
+      width: 500px;
+      height: 500px;
+    }
+
+    #sprite4 {
+      background: url('present-7.png') no-repeat center center;
+      width: 400px;
+      height: 700px;
+    }
+  </style>
+</head>
+<body>
+  <div id="background">
+    <!-- Sprites -->
+    <div id="sprite4" class="sprite" style="bottom: 0px; left: 200px;"></div>
+    <div id="sprite3" class="sprite" style="bottom: 0px; left: 150px;"></div>
+    <div id="sprite2" class="sprite" style="bottom: 0px; left: 100px;"></div>
+    <div id="sprite1" class="sprite" style="bottom: 0px; left: 50px;"></div>
+  </div>
+
+  <script>
+    const sprites = document.querySelectorAll('.sprite');
+    let activeSprite = null;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    // Add event listeners to each sprite
+    sprites.forEach(sprite => {
+      sprite.addEventListener('mousedown', (e) => {
+        activeSprite = sprite;
+        offsetX = e.clientX - sprite.offsetLeft;
+        offsetY = e.clientY - sprite.offsetTop;
+        sprite.style.cursor = 'grabbing';
+      });
+
+      sprite.addEventListener('mouseup', () => {
+        activeSprite = null;
+        sprite.style.cursor = 'grab';
+      });
+    });
+
+    // Handle dragging
+    window.addEventListener('mousemove', (e) => {
+      if (activeSprite) {
+        const x = e.clientX - offsetX;
+        const y = e.clientY - offsetY;
+        activeSprite.style.left = `${x}px`;
+        activeSprite.style.top = `${y}px`;
+      }
+    });
+
+    // Release the sprite when the mouse button is released outside it
+    window.addEventListener('mouseup', () => {
+      if (activeSprite) {
+        activeSprite.style.cursor = 'grab';
+        activeSprite = null;
+      }
+    });
+
+    window.addEventListener('load', () => {
+        const background = document.getElementById('background');
+        const sprites = document.querySelectorAll('.sprite');
+  
+        // Set the original dimensions of the background image
+        const originalBackgroundWidth = 1640;
+        const originalBackgroundHeight = 2360;
+
+        function scaleSprites() {
+            const backgroundWidth = background.offsetWidth;
+            const backgroundHeight = background.offsetHeight;
+
+            // Calculate scale factors
+            const scaleX = backgroundWidth / originalBackgroundWidth;
+            const scaleY = backgroundHeight / originalBackgroundHeight;
+
+            // Apply the smaller scale factor to maintain aspect ratio
+            const scale = Math.min(scaleX, scaleY);
+
+            // Scale each sprite
+            sprites.forEach(sprite => {
+                sprite.style.transform = `scale(${scale})`;
+            });
+        }
+
+        // Scale sprites on page load and when the window is resized
+        scaleSprites();
+        window.addEventListener('resize', scaleSprites);
+    });
+  </script>
+</body>
+</html>
